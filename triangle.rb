@@ -1,8 +1,8 @@
 puts "Основание треугольника"
-a = gets.to_i
+a = gets.to_f
 
 puts "Высота треугольника"
-h = gets.to_i
+h = gets.to_f
 
 s = 0.5 * a * h
 
