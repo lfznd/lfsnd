@@ -7,7 +7,7 @@ b = gets.to_i
 puts "c"
 c = gets.to_i
 
-d = (b**2 )- (4 * a * c)
+d = b**2 - 4 * a * c
 
 if d > 0
   sq = Math.sqrt(d)
@@ -17,7 +17,10 @@ if d > 0
 elsif d == 0
   x = -b / (2 * a)
   puts "x =#{x}, дискриминант #{d}"
-else d < 0
+elsif d < 0
   puts "Корней нет, дискриминант #{d}"
+else 
+	puts "Error!!!"
 
-end
+end 
+ 
