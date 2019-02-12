@@ -10,16 +10,13 @@ month = {
 	"Август" => 31,
 	"Сентябрь" => 30,
 	"Октябрь" => 31,
-	"Ноябрь" => 30,
+    "Ноябрь" => 30,
 	"Декабрь" => 31
 }
- 
 
 month.each do |month, days|
 
-  if days == 30
-  	puts "#{month}"
-  end
+  puts month if days == 30
 
 end
 
