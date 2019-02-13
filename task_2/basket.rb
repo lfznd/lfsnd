@@ -10,7 +10,7 @@ product_price = gets.chomp.to_f
 
 puts "Введите колличество товара"
 product_qty = gets.chomp.to_i
-basket[product] = { price: product_price, quantity: product_qty,}
+basket[product] = { price: product_price, quantity: product_qty }
 end
 
 
