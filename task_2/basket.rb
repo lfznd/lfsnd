@@ -19,7 +19,7 @@ total_price = 0
 
 puts "Товар в корзине:"
 basket.each do |key, value| 
-puts ("#{key} #{basket[key]}") 
+puts "#{key} #{basket[key]}" 
 total_price += value[:price] * value[:quantity]
 end
 
