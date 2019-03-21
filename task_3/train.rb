@@ -15,7 +15,7 @@ class Train
   end
 
   def go(speed)
-    @speed = speed 
+    @speed += speed 
   end
 
   def current_speed
@@ -23,15 +23,11 @@ class Train
   end
 
   def add_carriage
-    if speed == 0
-      @carriage +=1
-    end
+    @carriage += 1 if speed.zero?
   end
 
   def remove_carriage
-    if @carriage > 0 && speed == 0
-      @carriage -= 1
-    end  
+    @carriage -= 1 if @carriage > 0 && speed.zero?
   end
 
   def add_route(route)
@@ -40,30 +36,22 @@ class Train
   end 
 
   def next_station
-    if @station == route.stations.last
-    else
-      route.stations[route.stations.index(station) + 1]
-    end
+    route.stations[route.stations.index(station) + 1] if @station != route.stations.last
   end
 
   def prev_station
-    if @station == route.stations.first
-    else
-      route.stations[route.stations.index(station) -1]
-    end
+    route.stations[route.stations.index(station) -1] if @station != route.stations.first
   end
 
   def move_next
-    if @station == route.stations.last
-    else
-      @station = route.stations[route.stations.index(station) +1]
+    if @station != route.stations.last
+      @station = next_station
     end
   end
 
   def move_prev
-    if @station == route.stations.first
-    else
-      @station = route.stations[route.stations.index(station) -1]
+    if @station != route.stations.first
+      @station = prev_station
     end
   end
 end

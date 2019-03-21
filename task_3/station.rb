@@ -16,10 +16,10 @@ class Station
   end
 
   def show_train
-    trains.each{|train| puts train} 
+    trains.each{ |train| puts train } 
   end
 
   def show_types(type)
-    trains.each {|train| train.type == type}  
+    trains.each { |train| train.type == type }  
   end
 end

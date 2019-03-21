@@ -11,13 +11,12 @@ class Route
   end
 
   def remove_station(station)
-    if station == stations.first || station == stations.last
-    else @stations.include?(station) 
-      @stations.delete(station)
-    end
+    return if station == sation.first || sation == sation.last
+    @station.delete(station) if station.include?(station)
   end
 
   def show_station 
-    @stations.each {|station| puts station.name}
+    @stations.each { |station| puts station.name }
   end
 end
+  
