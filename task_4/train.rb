@@ -1,14 +1,22 @@
 class Train
 
-  attr_accessor :carriage, :speed, :station, :route, :type
+  attr_accessor :carriage, :speed, :station, :route, :type, :carriages
   attr_reader :number
 
   def initialize(number, speed = 0)
     @number = number
     @type = type
     @speed = speed
-    @route = route
     @carriages = []
+  end
+
+  def add_carriage(carriage)
+    @carriages << carriage if speed.zero?
+  end
+
+  def remove_carriage(carriage)
+    puts "Нельзя отцеплять вагоны когда поезд в пути!" if speed != 0
+    @carriages.delete(carriage) if @carriages.include?(carriage)
   end
 
   def stop
@@ -25,7 +33,9 @@ class Train
 
   def add_route(route)
     @station = route.stations.first
-  end 
+    @station.get_train(self)
+    @route = route
+  end
 
   def next_station
     route.stations[route.stations.index(station) + 1] if @station != route.stations.last
@@ -36,14 +46,22 @@ class Train
   end
 
   def move_next
-    if @station != route.stations.last
-      @station = next_station
+    if next_station
+      @station.send_train(self)
+      @station = next_station 
+      @station.get_train(self)
+    else
+      return 
     end
   end
 
-  def move_prev
-    if @station != route.stations.first
-      @station = prev_station
-    end 
+  def move_previous
+    if previous_station
+      @station.send_train(self)
+      @station = previous_station
+      @station.get_train(self)
+    else
+      return 
+    end
   end
 end

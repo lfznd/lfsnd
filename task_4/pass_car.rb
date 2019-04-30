@@ -1,5 +1,6 @@
 class PassCar < Carriage
-	def initialize (type = "pass")
-		@type = type
-	end
+
+  def initialize
+    @type = "pass"
+  end
 end
