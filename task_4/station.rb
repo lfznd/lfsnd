@@ -1,9 +1,8 @@
 class Station
+  attr_accessor :name, :trains
   
-  attr_reader :name, :trains
-
   def initialize(name)
-    @name = name 
+    @name = name
     @trains = []
   end
 
@@ -12,14 +11,14 @@ class Station
   end
 
   def send_train(train)
-    trains.delete(train)
+    @trains.delete(train)
   end
 
-  def show_train
-    trains.each{ |train| puts train } 
+  def show_trains
+    @trains.each.with_index(1) { |train, index| puts "#{index}. #{train.number}" } 
   end
 
-  def show_types(type)
-    trains.each { |train| train.type == type }  
+  def show_type(type)
+    @trains.each { |train| train.type == type }
   end
 end
