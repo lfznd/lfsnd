@@ -2,7 +2,7 @@ class PassTrain < Train
 
   def initialize (number)
     super
-    @type = type
+    @type = "pass"
   end 
 
   def add_carriage(carriage)
