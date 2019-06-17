@@ -1,7 +1,9 @@
 require_relative "instance_counter"
+require_relative "validate"
 
 class Route
   include InstanceCounter
+  include Validate
 
   STATION_ERROR = "Одна станция не может быть начальной и конечной"
 
@@ -9,8 +11,8 @@ class Route
 
   def initialize (first_station, last_station)
     @stations = [first_station, last_station]
-    register_instance
     validate!
+    register_instance
   end
 
   def first_station
@@ -34,12 +36,7 @@ class Route
     @stations.each { |station| puts station }
   end
 
-  def valid?
-    validate!
-    true
-  rescue
-    false
-  end
+  protected
 
   def validate!
     raise STATION_ERROR if first_station == last_station

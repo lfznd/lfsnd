@@ -1,7 +1,9 @@
 require_relative "instance_counter"
+require_relative "validate"
 
 class Station
   include InstanceCounter
+  include Validate
 
   attr_reader :name, :trains
 
@@ -13,8 +15,8 @@ class Station
     @name = name 
     @trains = []
     @@all_stations << self
-    register_instance
     validate!
+    register_instance
   end
 
   def self.all
@@ -37,12 +39,7 @@ class Station
     trains.each { |train| train.type == type }  
   end
 
-  def valid?
-    validate!
-    true
-  rescue
-    false
-  end
+  protected
 
   def validate!
     raise NAME_LENGTH_ERROR if name.length < 3

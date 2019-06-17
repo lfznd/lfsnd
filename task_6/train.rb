@@ -1,9 +1,11 @@
 require_relative "manufacturer"
 require_relative "instance_counter"
+require_relative "validate"
 
 class Train
   include Manufacturer
   include InstanceCounter
+  include Validate
 
   attr_accessor :carriage, :speed, :station, :route, :type, :carriages, :number
 
@@ -17,9 +19,9 @@ class Train
     @type = type
     @speed = speed
     @carriages = []
+    validate!
     @@trains[number] = self
     register_instance
-    validate!
   end
 
   def self.find(number)
@@ -79,13 +81,6 @@ class Train
     else
       return 
     end
-  end
-
-  def valid?
-    validate!
-    true
-  rescue
-    false
   end
 
   protected
