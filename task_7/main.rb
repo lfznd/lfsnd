@@ -1,0 +1,306 @@
+require_relative ('./station')
+require_relative ('./train')
+require_relative ('./route')
+require_relative ('./passenger')
+require_relative ('./cargo')
+require_relative ('./carriage')
+require_relative ('./car_cargo')
+require_relative ('./car_pass')
+
+class Main
+
+  def initialize
+    @stations = []
+    @trains = []
+    @routes = []
+    @carriages = []
+  end
+
+  def menu
+    loop do
+      puts " "
+      puts "Введите '1' для операций со станциями"  
+      puts "Введите '2' для операций с поездами"
+      puts "Введите '3' для операций с маршрутами"
+      puts "Введите '0' чтобы закончить"
+      answer = gets.to_i
+      case answer
+      when 1 then station_manager
+      when 2 then train_manager
+      when 3 then route_manager
+      when 0 then break
+      else puts "Введите другое значение"
+      end
+    end
+  end
+
+  def station_manager
+    loop do
+      puts " "
+      puts "Введите '1' чтобы создать станцию "
+      puts "Введите '2' чтобы посмотреть список станций и поездов на них "
+      puts "Введите '0' чтобы вернуться в меню"
+      answer = gets.to_i
+      case answer
+      when 1 then new_station
+      when 2 then show_trains_on_station
+      when 0 then break
+      else puts "Введите другое значение"
+      end
+    end
+  end
+
+  def train_manager
+    loop do
+      puts " "
+      puts "Введите '1' чтобы создать поезд "
+      puts "Введите '2' чтобы прицепить к поезду вагон "
+      puts "Введите '3' чтобы отцепить от поезда вагон "
+      puts "Введите '4' чтобы перемещать поезд "
+      puts "Введите '5' чтобы занять место в вагоне "
+      puts "Введите '6' чтобы посмотреть список вагонов у поезда "
+      puts "Введите '0' чтобы вернуться в меню"
+      answer = gets.to_i
+      case answer
+      when 1 then new_train
+      when 2 then add_carriage
+      when 3 then remove_carriage
+      when 4 then train_move
+      when 5 then take_carriage_place
+      when 6 then show_carriages
+      when 0 then break
+      else puts "Введите другое значение"
+      end
+    end
+  end
+
+  def route_manager
+    loop do
+      puts " "
+      puts "Введите '1' чтобы создать маршрут"
+      puts "Введите '2' чтобы добавить станцию в маршрут"
+      puts "Введите '3' чтобы удалить станцию из маршрута" 
+      puts "Введите '4' чтобы посмотреть маршрут"
+      puts "Введите '5' чтобы назначить маршрут поезду"
+      puts "Введите '0' вернуться в меню"
+      answer = gets.to_i
+      break if answer == 0
+      case answer
+      when 1 then create_route
+      when 2 then add_station_to_route
+      when 3 then remove_station_from_route
+      when 4 then show_routes
+      when 5 then add_route
+      when 0 then break
+      else puts "Введите другое значение"
+      end
+    end
+  end
+
+  def new_station
+    puts "Введите название станции"
+    name = gets.chomp
+    new_station = Station.new(name)
+    @stations.push(new_station)
+    puts "Построена станция #{name}"
+  rescue Exception => e
+    puts e.message
+    retry
+  end
+
+  def new_train
+    puts "Введите тип поезда (1 - грузовой / 2 - пассажирский)"
+    type = gets.chomp
+    puts "Введите номер поезда в пятизначном формате"
+    number = gets.chomp
+    if type == "1"
+      @trains.push(CargoTrain.new(number))
+      puts "Создан поезд под номером #{number} грузового типа"
+    elsif type == "2"
+      @trains.push(PassTrain.new(number))
+      puts "Создан поезд под номером #{number} пассажирского типа"
+    else
+      puts "Данного типа поезда не существует"
+    end
+  rescue Exception => e
+    puts e.message
+    retry
+  end
+
+  def add_carriage
+    train = select_train
+    if train.type == :cargo
+      puts "Введите номер вагона"
+      number = gets.chomp.to_i
+      puts "Введите объём грузового вагона"
+      volume = gets.chomp.to_i
+      carriage = CargoCarriage.new(number, volume)
+      train.carriages.push(carriage)
+      @carriages << carriage
+      puts "К поезду  №#{train.number} добавлен вагон, всего вагонов у поезда - #{train.carriages.size} " 
+    elsif train.type == :passenger
+      puts "Введите номер вагона"
+      number = gets.chomp.to_i
+      puts "Введите количество мест в вагоне"
+      seats = gets.chomp.to_i
+      carriage = PassCarriage.new(number, seats)
+      train.carriages.push(carriage)
+      @carriages << carriage
+      puts "К поезду  №#{train.number} добавлен вагон, всего вагонов у поезда - #{train.carriages.size} " 
+    else
+      puts "Что-то пошло не так :("
+    end
+  end
+
+  def remove_carriage
+    #при выборе вагона повторяет строку "выберите поезд" из метода select_train 2 раза, после чего благополучно удаляет вагон
+    train = select_train
+    carriage = select_carriage
+    train.remove_carriage(carriage)
+    puts "У поезда  №#{train.number} убран вагон № #{carriage.number}, всего вагонов у поезда - #{train.carriages.size} "
+  end
+
+  def create_route
+    puts "Выберите станцию отправления"
+    first_station = select_station
+    puts "Выберите станцию назначения"
+    last_station = select_station
+    @routes.push(Route.new(first_station, last_station))
+    puts "Создан маршрут от станции #{first_station.name} до станции #{last_station.name}"
+  rescue Exception => e
+    puts e.message
+  end
+
+  def add_station_to_route
+    route = select_route
+    station = select_station
+    if route.stations.include?(station)
+      puts "Данная станция есть в маршруте"
+    else
+      route.add_station(station)
+      puts "Станция #{station.name} добавлена к маршруту"
+    end
+  end
+
+  def remove_station_from_route
+    route = select_route
+    puts "Выберите станцию"
+    station = select_station
+    if station == routes.first || station == routes.last
+      puts "Нельзя удалить начальную и конечную станции"
+    elsif @routes.include?(station)
+      @routes.delete(station)
+      puts "Станция #{station.name} удалена из маршрута"
+    else
+      puts "Данной станции нет в маршруте"
+    end
+  end
+
+  def show_trains
+    @trains.each.with_index(1) { |train, x| puts "#{x}. Поезд № #{train.number}, типа - #{train.type}, количество вагонов - #{train.carriages.count}" }
+  end
+
+  def show_routes
+    @routes.each.with_index(1) { |route, x| print "#{x}. Из станции #{route.stations[0].name} до станции #{route.stations[-1].name} \n" }
+  end
+
+  def show_stations
+    @stations.each.with_index(1) { |station, x| puts "#{x}. #{station.name}" }
+  end
+
+  def show_train_route
+    train = select_train
+    puts "Маршрут = #{train.route.stations}"
+  end
+
+  def show_trains_on_station
+    @stations.each_with_index do |station, index|
+      puts "Станция: #{station.name} \n Поезда на станции: #{station.show_trains}" 
+    end
+  end
+
+  def select_train
+    puts "Выберите поезд:"
+    show_trains
+    @trains[gets.to_i - 1]
+  end
+
+  def select_route
+    puts "Выберите маршрут: \n"
+    show_routes
+    @routes[gets.to_i - 1]
+  end
+
+  def select_station
+    puts "Выберите станцию: "
+    show_stations
+    @stations[gets.to_i - 1]
+  end
+
+  def add_route
+    route = select_route
+    train = select_train
+    train.add_route(route)
+    puts "К поезду №#{train.number} добавлен маршрут от станции #{route.first_station.name} до станции #{route.last_station.name}"
+  end
+
+  def train_move
+    train = select_train
+    loop do
+      puts "Введите '1' чтобы отправить поезд на следующую станцию"
+      puts "Введите '2' чтобы отправить поезд на предыдущую станцию" 
+      puts "Введите '3' чтобы вернуться назад"
+      case gets.to_i
+      when 1
+        train.move_next
+        puts "Станция - #{train.station.name}"
+        puts "Следующая станция - #{train.next_station.name}" if train.next_station != nil
+      when 2
+        train.move_previous
+        puts "Станция - #{train.station.name}"
+        puts "Следующая станция - #{train.previous_station.name}" if train.previous_station != nil
+      when 3 then break
+      else puts "Введите верное значение"
+      end
+    end
+  end
+
+  def show_carriages
+    train = select_train
+    train.carriages.each.with_index(1) { |carriage, x|  puts "#{x}. Вагон № #{carriage.number}. Тип вагона: #{carriage.type}. Свободно: #{carriage.free_place}. Занято: #{carriage.occupied_place}" }
+  end
+
+  def select_carriage
+    show_carriages
+    @carriages[gets.to_i - 1]
+  end
+
+  def take_carriage_place
+    carriage = select_carriage
+    if carriage.is_a?(CargoCarriage)
+      puts "Введите величину объёма, которую хотите занять"
+      place = gets.to_i
+      carriage.occupy_place(place)
+    else
+      carriage.occupy_place
+    end
+  end
+end
+
+test = Main.new
+test.menu
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
