@@ -20,6 +20,6 @@ class Carriage
   end
 
   def free_place
-    @free_place = @place - @occupied_place
+    @place - @occupied_place
   end
 end
