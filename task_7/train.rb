@@ -82,7 +82,7 @@ class Train
       @station = previous_station
       @station.get_train(self)
     else
-      return 
+      return
     end
   end
 
@@ -94,17 +94,7 @@ class Train
   protected
 
   def validate!
-    raise "Длина номера меньше пяти символов" if number.length < 3 
+    raise "Длина номера меньше пяти символов" if number.length < 3
     raise "Неверный формат номера" if number !~ NUMBER_FORMAT
   end
 end
-
-=begin
-st1 = Station.new("Moscow")
-st2 = Station.new("London")
-st3 = Station.new("Paris")
-tr = PassTrain.new(12)
-rt = Route.new(st1, st2)
-rt.add_station(st3)
-tr.add_route(rt)
-=end 
